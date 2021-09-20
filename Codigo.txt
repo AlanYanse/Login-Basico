@@ -1,0 +1,58 @@
+// La función doGet permite mostrar la página web en el navegador
+
+function doGet() {
+
+  var template = HtmlService.createTemplateFromFile("index");
+
+  var html = template.evaluate();
+
+  return html;
+  
+}
+
+// Se declara la función include que insertará el archivo de la hoja de estilos y el códido JavaScript en el index
+// esta función se llama en el documento html.
+
+
+function include(fileName){
+
+  return HtmlService.createHtmlOutputFromFile(fileName).getContent();
+
+}
+
+function verificarPassword(form){
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet_usuarios = ss.getSheetByName("Usuarios");
+  var data_usuarios = sheet_usuarios.getDataRange().getValues();
+  var sheet_ventas = ss.getSheetByName("Ventas");
+  var data_ventas = sheet_ventas.getDataRange().getDisplayValues();
+
+  for(var i in data_usuarios){
+
+    if(data_usuarios[i][1] == form.usuario && data_usuarios[i][2] == form.contrasena){
+
+      var usuario = {
+
+        headers: data_ventas[0],
+        nombre: data_usuarios[i][0],
+        ventas: ""
+      }
+
+      for(var fila in data_ventas){
+
+        if(data_ventas[fila][0] == usuario.nombre){
+
+          usuario.ventas = data_ventas[fila];
+          break;
+        }
+      }
+
+      return usuario;
+
+    }
+  }
+
+  throw("los datos son incorrectos, recargar la página");
+
+}
